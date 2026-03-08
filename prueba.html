@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feliz Día de la Mujer Mi amor</title>
+
+<style>
+
+body{
+margin:0;
+overflow:hidden;
+background:black;
+font-family:Arial, Helvetica, sans-serif;
+color:white;
+text-align:center;
+}
+
+/* TITULOS */
+
+.titulo{
+position:absolute;
+top:5%;
+width:100%;
+font-size:40px;
+color:#ff66cc;
+text-shadow:0 0 20px #ff00ff;
+z-index:2;
+}
+
+.nombre{
+position:absolute;
+top:13%;
+width:100%;
+font-size:28px;
+color:#ffffff;
+text-shadow:0 0 10px #ff66ff;
+z-index:2;
+}
+
+/* CORAZON */
+
+.heart{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) rotate(-45deg);
+width:140px;
+height:140px;
+background:#e4012e;
+animation:latido 2s infinite;
+box-shadow:0 0 30px #ff0000;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:2;
+}
+
+.heart:before,
+.heart:after{
+content:"";
+position:absolute;
+width:140px;
+height:140px;
+background:#e4012e;
+border-radius:50%;
+}
+
+.heart:before{
+top:-70px;
+left:0;
+}
+
+.heart:after{
+left:70px;
+top:0;
+}
+
+/* HELLO KITTY */
+
+.kitty{
+position:absolute;
+width:70px;
+transform:rotate(45deg);
+z-index:3;
+}
+
+/* LATIDO */
+
+@keyframes latido{
+0%{transform:translate(-50%,-50%) rotate(-45deg) scale(1);}
+50%{transform:translate(-50%,-50%) rotate(-45deg) scale(1.2);}
+100%{transform:translate(-50%,-50%) rotate(-45deg) scale(1);}
+}
+
+/* CANVAS */
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+}
+
+/* RESPONSIVE */
+
+@media (max-width:600px){
+
+.titulo{
+font-size:28px;
+}
+
+.nombre{
+font-size:20px;
+}
+
+.kitty{
+width:50px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="titulo">Feliz Día de la Mujer</div>
+<div class="nombre">Mi amor ❤️</div>
+
+<div class="heart">
+<img class="kitty" src="Hello.jpg">
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+/* ESTRELLAS */
+
+let stars=[];
+
+for(let i=0;i<200;i++){
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*2,
+speed:Math.random()*1
+});
+}
+
+/* FUEGOS ARTIFICIALES */
+
+let fireworks=[];
+let particles=[];
+
+function createFirework(){
+
+fireworks.push({
+x:Math.random()*canvas.width,
+y:canvas.height,
+targetY:Math.random()*canvas.height/2,
+speed:5,
+color:`hsl(${Math.random()*360},100%,50%)`
+});
+
+}
+
+function explode(x,y,color){
+
+for(let i=0;i<50;i++){
+
+particles.push({
+x:x,
+y:y,
+vx:(Math.random()-0.5)*6,
+vy:(Math.random()-0.5)*6,
+life:100,
+color:color
+});
+
+}
+
+}
+
+/* ANIMACION */
+
+function animate(){
+
+ctx.fillStyle="rgba(0,0,0,0.3)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+/* ESTRELLAS */
+
+ctx.fillStyle="white";
+
+stars.forEach(s=>{
+
+ctx.beginPath();
+ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+ctx.fill();
+
+s.y+=s.speed;
+
+if(s.y>canvas.height){
+s.y=0;
+s.x=Math.random()*canvas.width;
+}
+
+});
+
+/* FUEGOS */
+
+fireworks.forEach((f,i)=>{
+
+ctx.fillStyle=f.color;
+ctx.beginPath();
+ctx.arc(f.x,f.y,3,0,Math.PI*2);
+ctx.fill();
+
+f.y-=f.speed;
+
+if(f.y<=f.targetY){
+
+explode(f.x,f.y,f.color);
+fireworks.splice(i,1);
+
+}
+
+});
+
+/* PARTICULAS */
+
+particles.forEach((p,i)=>{
+
+ctx.fillStyle=p.color;
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,2,0,Math.PI*2);
+ctx.fill();
+
+p.x+=p.vx;
+p.y+=p.vy;
+p.life--;
+
+if(p.life<=0){
+particles.splice(i,1);
+}
+
+});
+
+requestAnimationFrame(animate);
+
+}
+
+setInterval(createFirework,1200);
+
+animate();
+
+window.addEventListener("resize",()=>{
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+});
+
+</script>
+
+</body>
+</html>
